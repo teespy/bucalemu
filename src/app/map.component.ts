@@ -2,68 +2,58 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { OnInit } from '@angular/core';
 
-import { Map } from '../providers/map';
-import { MapboxMapStyles } from '../assets/mapstyles.ts';
+import { MapBox } from '../providers/map';
 
 @Component({
     selector: 'map-component',
     templateUrl: 'map.component.html',
-    providers: [Map]
+    providers: [MapBox]
 })
 export class MapComponent implements OnInit {
-    currentLongitude = null;
-    currentLatitude = null;
-    colors = ['red', 'green', 'orange', 'yellow', 'blue'];
-    overlayIDs = 1;
+    public currentCoords:any = {'longitude': null, 'latitude': null};
+    public overlayIDs:number = 1;
 
-    constructor(public navCtrl: NavController, public bucalemu: Map) { }
+    constructor(public navCtrl: NavController, public bucalemu: MapBox) { }
 
-    ngOnInit(): void {
-        navigator.geolocation.getCurrentPosition(this.onSuccess, this.onError);
+    ngOnInit ():void {
+        navigator.geolocation.getCurrentPosition(this.onSuccessGetPosition, this.onErrorGetPosition);
     }
 
-    onSuccess = (position) => { // Golocation, center map in user's location
+    onSuccessGetPosition = (position):void => { // Golocation, center map in user's location
         try {
-            var style = new MapStyles.MapboxMapStyles().getStyle(position.coords.longitude, position.coords.latitude, 'osmbright');
-            this.bucalemu.makeMap(style);
-            this.bucalemu.map.on('load', this.mapOnLoad);
+            this.currentCoords.longitude = position.coords.longitude;
+            this.currentCoords.latitude = position.coords.longitude;
+            this.bucalemu.makeMap(this.currentCoords);
+            this.bucalemu.on('load', this.mapOnLoad);
         } catch (e) {
-            console.log("MapComponent.onSuccess() error");
+            console.log("Catched error in MapComponent.onSuccessGetPosition()");
         }
     }
 
-    onError = (error) => { // No geolocation, center map in Plaza de Armas
+    onErrorGetPosition = (error):void => { // No geolocation, center map in Plaza de Armas
         try {
-            var style = new MapStyles.MapboxMapStyles().getStyle(-70.650469, -33.437863, 'osmbright');
-            this.bucalemu.makeMap(style);
-            this.bucalemu.map.on('load', this.mapOnLoad);
+            this.currentCoords.longitude = -70.650469; // Plaza de Armas, Santiago, Chile
+            this.currentCoords.latitude = -33.437863;
+            this.bucalemu.makeMap(this.currentCoords);
+            this.bucalemu.on('load', this.mapOnLoad);
         } catch (e) {
-            console.log("MapComponent.onSuccess() error");
+            console.log("Catched error in MapComponent.onErrorGetPosition()");
         }
-
     }
 
-    mapOnLoad = () => {
+    mapOnLoad = ():void => {
         try {
-            this.bucalemu.addGeoJSONRandomBuilding(this.currentLongitude, this.currentLatitude, 0.0002, 5, ["blue", "yellow", "green"], "building" + this.overlayIDs);
+            this.bucalemu.addGeoJSONRandomBuilding(this.currentCoords.longitude, this.currentCoords.latitude, "b" + this.overlayIDs);
+            this.bucalemu.on('click', this.mapOnClick);
             this.overlayIDs += 1;
-            this.bucalemu.map.on('click', this.mapOnClick);
         } catch (e) {
-            console.log("MapComponent.mapOnLoad() error");
+            console.log("Catched error in MapComponent.mapOnLoad()");
         }
     }
 
-    mapOnClick = (eventinfo) => {
+    mapOnClick = (eventinfo):void => {
         try {
-            let buildingcolors = [
-                this.colors[Math.floor(Math.random() * this.colors.length)],
-                this.colors[Math.floor(Math.random() * this.colors.length)],
-                this.colors[Math.floor(Math.random() * this.colors.length)]
-            ];
-            let buildingbase = 0.0001 + 0.0002 * (Math.floor(Math.random() * this.colors.length));
-            let buildingheight = 2 + 5 * (Math.floor(Math.random() * this.colors.length));
-
-            this.bucalemu.addGeoJSONRandomBuilding(eventinfo.lngLat.lng, eventinfo.lngLat.lat, buildingbase, buildingheight, buildingcolors, "building" + this.overlayIDs);
+            this.bucalemu.addGeoJSONRandomBuilding(eventinfo.lngLat.lng, eventinfo.lngLat.lat, "b" + this.overlayIDs);
             this.overlayIDs += 1;
         } catch (e) {
             console.log("MapComponent.mapOnClick() error");

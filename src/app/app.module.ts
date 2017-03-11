@@ -8,20 +8,22 @@ import { MapComponent } from './map.component';
 @NgModule({
   declarations: [
     MyApp,
-    MapComponent,                                 
+    MapComponent,
     HomePage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
   ],
-  bootstrap: [IonicApp],
+  bootstrap: [
+    IonicApp
+  ],
   entryComponents: [
     MyApp,
-    MapComponent, 
+    MapComponent,
     HomePage
   ],
   providers: [
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
-    ]
+    { provide: ErrorHandler, useClass: IonicErrorHandler }
+  ]
 })
-export class AppModule {}
+export class AppModule { }
