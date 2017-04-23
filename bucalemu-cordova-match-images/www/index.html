@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:">
+    <title>cordova-plugin-camera-preview Sample App</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+  </head>
+  <body>
+    <div id="pictureDiv">
+      <img class="imgPair" id="pictureA"/>
+      <img class="imgPair" id="pictureB"/>
+    </div>
+
+    <div id="similarityScoreDiv">
+      <span id="similarityScore">Similitud</span>
+    </div>
+
+    <div id="distanceScoresDive">
+      <div><span id="pixelDistance">Pixel distance</span></div>
+      <div><span id="hammingDistance">Hamming distance</span></div>
+    </div>
+
+    <div id="takePictureDiv">
+      <button id="takePictureButton">Fotografiar</button>
+    </div>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="CameraPreview.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+  </body>
+</html>
