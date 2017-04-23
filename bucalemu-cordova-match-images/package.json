@@ -1,0 +1,11 @@
+{
+  "name": "bucalemu-cordova-match-images",
+  "devDependencies": {
+    "browserify": "latest",
+    "jimp": "latest",
+    "arraybuffer-to-buffer": "latest"
+  },
+  "scripts": {
+    "build": "browserify src/index.js > www/js/index.js"
+  }
+}
