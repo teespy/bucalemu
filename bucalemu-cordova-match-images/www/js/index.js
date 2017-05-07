@@ -85323,9 +85323,15 @@ function extend() {
 }
 
 },{}],410:[function(require,module,exports){
+module.exports = {
+    postImageUrl: "http://192.168.0.8:7600/postimage"
+}
+},{}],411:[function(require,module,exports){
 (function (Buffer){
 var arrayBufferToBuffer = require('arraybuffer-to-buffer')
 var jimp = require('jimp')
+var config = require('./config')
+
 
 var jimpApp = {
   fetchFromUrl: function (imgUrl) {
@@ -85345,57 +85351,89 @@ var jimpApp = {
   },
 
   init: function () {
-    let bartSimpson = 'http://pre10.deviantart.net/cfcd/th/pre/i/2004/03/2/8/rolling_stone_bart.jpg'
-
-    console.log("about to call this.fetchFromUrl()")
-    this.fetchFromUrl(bartSimpson)
-      .then(function (bartImage) {
-        console.log("fetched bart!, he loks like this")
-        console.log(bartImage)
-        console.log("Bart's hash is")
-        console.log(bartImage.hash())
-      })
+    /*
+        let bartSimpson = 'http://pre10.deviantart.net/cfcd/th/pre/i/2004/03/2/8/rolling_stone_bart.jpg'
+    
+        console.log("about to call this.fetchFromUrl()")
+        this.fetchFromUrl(bartSimpson)
+          .then(function (bartImage) {
+            console.log("fetched bart!, he loks like this")
+            console.log(bartImage)
+            console.log("Bart's hash is")
+            console.log(bartImage.hash())
+          })
+    */
   }
 }
 
 var app = {
-  previosImgData: false,
-  
+  previousImgData: false,
+
   previousJImage: false,
 
   startCamera: function () {
     let width = parseInt(window.screen.width * 0.5)
-    let height = parseInt((window.screen.width * 0.5)*640/480)
-    let x = parseInt((window.screen.width - width)/2)
+    let height = parseInt((window.screen.width * 0.5) * 640 / 480)
+    let x = parseInt((window.screen.width - width) / 2)
     let y = 5
     CameraPreview.startCamera({ x: x, y: y, width: width, height: height, camera: "back", toBack: false, previewDrag: false, tapPhoto: true });
   },
 
+  sendBase64ToServer: function (base64) {
+    console.log(config)
+    var httpPost = new XMLHttpRequest(),
+      path = config.postImageUrl,
+      //path = "http://192.168.0.8:7600/postimage"
+      data = JSON.stringify({ image: base64 })
+
+    httpPost.onreadystatechange = function (err) {
+      if (httpPost.readyState == 4 && httpPost.status == 200) {
+        console.log(httpPost.responseText)
+      } else {
+        console.log(err)
+      }
+    }
+
+    // Set the content type of the request to json since that's what's being sent
+    httpPost.open("POST", path, true)
+    httpPost.setRequestHeader('Content-Type', 'application/json')
+    httpPost.send(data)
+  },
+
+  uploadPicture: function () {
+    console.log("here I am")
+    console.log(app.previousImgData)
+    app.sendBase64ToServer(app.previousImgData)
+  },
+
   takePicture: function () {
-    CameraPreview.takePicture({width:640, height:480, quality: 85}, function (imgData) {
+    CameraPreview.takePicture({ width: 640, height: 480, quality: 85 }, function (imgData) {
       let imgBuffer = Buffer.from(imgData[0], 'base64')
-      jimp.read(imgBuffer).then(function (jImage){
-        if (this.previousJImage) {
-          let diff = jimp.diff(jImage, this.previousJImage)           // pixel difference
-          let distance = jimp.distance(jImage, this.previousJImage)   // hamming distance
-          let similarity = Math.max(parseInt((1 - diff.percent) * 100), parseInt((1 - distance)*100))
-          
+      
+      jimp.read(imgBuffer).then(function (jImage) {
+        if (app.previousJImage) {
+          let diff = jimp.diff(jImage, app.previousJImage)           // pixel difference
+          let distance = jimp.distance(jImage, app.previousJImage)   // hamming distance
+          let similarity = Math.max(parseInt((1 - diff.percent) * 100), parseInt((1 - distance) * 100))
+
           document.getElementById('similarityScore').innerHTML = similarity.toString() + "% similares"
           document.getElementById('pixelDistance').innerHTML = "Pixel distance: " + diff.percent.toString()
           document.getElementById('hammingDistance').innerHTML = "Hamming distance: " + distance.toString()
         }
 
-        document.getElementById('pictureA').src = 'data:image/jpeg;base64,' + imgData
-        document.getElementById('pictureB').src = 'data:image/jpeg;base64,' + this.previousImgData
+        document.getElementById('pictureA').src = 'data:image/jpeg;base64,' + imgData[0]
+        if (app.previousImgData) {
+          document.getElementById('pictureB').src = 'data:image/jpeg;base64,' + app.previousImgData
+        }
 
-        this.previousImgData = imgData
-        this.previousJImage = jImage
+        app.previousImgData = imgData[0]
+        app.previousJImage = jImage
       })
     });
   },
 
   show: function () {
-    CameraPreview.show();
+    CameraPreview.show()
   },
 
   init: function () {
@@ -85403,20 +85441,22 @@ var app = {
     this.show()
 
     document.getElementById('pictureA').width = parseInt(window.screen.width * 0.4)
-    document.getElementById('pictureA').height = parseInt((window.screen.width * 0.4)*640/480)
+    document.getElementById('pictureA').height = parseInt((window.screen.width * 0.4) * 640 / 480)
     document.getElementById('pictureB').width = parseInt(window.screen.width * 0.4)
-    document.getElementById('pictureB').height = parseInt((window.screen.width * 0.4)*640/480)
-    
-    document.getElementById('pictureDiv').style.marginTop = parseInt((window.screen.width * 0.5)*640/480 + 10).toString() + "px"
+    document.getElementById('pictureB').height = parseInt((window.screen.width * 0.4) * 640 / 480)
+
+    document.getElementById('pictureDiv').style.marginTop = parseInt((window.screen.width * 0.5) * 640 / 480 + 10).toString() + "px"
 
     document.getElementById('takePictureButton').addEventListener('click', this.takePicture, false);
+    document.getElementById('uploadButton').addEventListener('click', this.uploadPicture, false);
 
     jimpApp.init();
   }
 };
 
 document.addEventListener('deviceready', function () { app.init() }, false)
+
 //document.addEventListener('deviceready', app.init(), false) // for some reason this throws a warning
 
 }).call(this,require("buffer").Buffer)
-},{"arraybuffer-to-buffer":43,"buffer":109,"jimp":215}]},{},[410]);
+},{"./config":410,"arraybuffer-to-buffer":43,"buffer":109,"jimp":215}]},{},[411]);
