@@ -7,24 +7,25 @@
     <link rel="stylesheet" type="text/css" href="css/index.css" />
   </head>
   <body>
-    <div id="pictureDiv">
-      <img class="imgPair" id="pictureA"/>
-      <img class="imgPair" id="pictureB"/>
+    <div id="pictureADiv" class="imgPair">
+        <img id="pictureA"/ class="absolute">
+    </div>
+    
+    <div id="pictureBDiv" class="imgPair">
+        <img id="pictureB"/ class="absolute">
     </div>
 
-    <div id="similarityScoreDiv">
-      <span id="similarityScore">Similitud</span>
+    <div id="similarityScoreDiv" class="absolute">
+      <div id="similarityScore">Similitud</div>
     </div>
 
-    <div id="distanceScoresDive">
+    <!--<div id="distanceScoresDiv">
       <div><span id="pixelDistance">Pixel distance</span></div>
       <div><span id="hammingDistance">Hamming distance</span></div>
-    </div>
+    </div>-->
 
-    <div id="takePictureDiv">
-      <button id="uploadButton">Subir</button>
-      <button id="takePictureButton">Fotografiar</button>
-    </div>
+    <button id="takePictureButton" class="absolute">F</button>
+    <button id="uploadButton" class="absolute">S</button>
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="CameraPreview.js"></script>

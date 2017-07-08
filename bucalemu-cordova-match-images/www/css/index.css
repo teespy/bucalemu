@@ -1,31 +1,47 @@
-body, html{
-  height:100%;
+body, html {
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
 }
-body{
-  color:#333;
-  text-align: center;
-  font-family: sans-serif;
-  background-color: transparent;
+
+body {
+	color: white;
+	text-align: center;
+	font-family: sans-serif;
+	background-color: transparent;
 }
+
 button {
-  margin-top: 5px;
-	background-color:#44c767;
-	-moz-border-radius:28px;
-	-webkit-border-radius:28px;
-	border-radius:28px;
-	border:1px solid #18ab29;
-	display:inline-block;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:17px;
-	padding:16px 31px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #2f6627;
+	background-color: #44c767;
+	-moz-border-radius: 28px;
+	-webkit-border-radius: 28px;
+	border-radius: 28px;
+	border: 1px solid #18ab29;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 15px;
+	padding: 12px 20px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #2f6627;
 }
-.imgPair {
-  margin: 10px;
+
+.red {
+	color: red;
 }
+
+.green {
+	color: #44c767;
+}
+
+.absolute {
+	position: absolute;
+}
+
 #similarityScore {
-  font-size: 30px;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 20px;
 }
